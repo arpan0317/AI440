@@ -39,8 +39,17 @@ class test:
                 ptLast = point(dim-1, dim-1)
                 self.maze[0][0] = cellMaze(ptFirst,'0',0)
                 self.maze[dim-1][dim-1] = cellMaze(ptLast,'0',0)
-                #print(self.maze[i][j].state, end = ' ')
-            #print()
+        y = random.randrange(0,dim)
+        x = random.randrange(0,dim)
+        fireCell = cellMaze(point(y,x), '1', 0)
+        self.maze[y][x] = fireCell
+        for m in range(0, dim):
+            for n in range(0, dim):
+                print(self.maze[m][n].state, end = ' ')
+            print()
+        print()
+
+
 
 
     def dfs(self, rows, columns, finalRow, finalCol, mazeIn):
@@ -66,7 +75,7 @@ class test:
                     fringe.append(cellMaze(mazeIn[currPt.y][currPt.x-1].pt, mazeIn[currPt.y][currPt.x-1].state, current.distance+1))
                 visited.append([currPt.y, currPt.x])
                 self.counterDFS = len(visited)
-        return False
+        return False, time.time()-startTime
 
 
     def bfs(self, rows, columns, finalRow, finalCol, mazeIn):
@@ -131,36 +140,76 @@ class test:
         distance = math.sqrt( ((columns-finalCol)**2)+((rows-finalRow)**2) )
         return distance
 
-#data_headerQ2 = ['density', 'reached']
-#with open('exportQ2.csv', 'w') as file_writerQ2:
-#    writerQ2 = csv.writer(file_writerQ2)
-#    writerQ2.writerow(data_headerQ2)
-#
-#    for probQ2 in range(1,100):
-#        for countQ2 in range(0,100):
-#            mazeQ2 = test(1000,probQ2/100)
-#            checkQ2 = mazeQ2.dfs(0,0,999,999,mazeQ2.maze)
-#            dataQ2 = [probQ2/100, checkQ2]
-#            writerQ2.writerow(dataQ2)
-#            print("prob: " , probQ2/100, " iteration: ", countQ2)
+    def aStarWithFire(self, rows, columns, finalRow, finalCol, mazeIn, q):
+        if mazeIn[rows][columns].state!='0':
+            return False
+        fringe = []
+        visited = []
+        distance = self.calcDistance(rows, columns, finalRow, finalCol)
+        heapq.heapify(fringe)
+        heapq.heappush(fringe, (distance, [mazeIn[rows][columns]]))
 
-#data_headerQ3 = ['difference', 'prob']
-#with open('exportQ3.csv', 'w') as file_writerQ3:
-#    writerQ3 = csv.writer(file_writerQ3)
-#    writerQ3.writerow(data_headerQ3)
-#
-#    for probQ3 in range(1,100):
-#        for countQ3 in range(0,100):
-#            mazeQ3 = test(1000,probQ3/100)
-#            check = mazeQ3.bfs(0,0,999,999,mazeQ3.maze)
-#            check2 = mazeQ3.aStar(0,0,999,999,mazeQ3.maze)
-#            differenceAStarBFS = mazeQ3.counterBFS - mazeQ3.counterAStar
-#            dataQ3 = [differenceAStarBFS, probQ3/100]
-#            writerQ3.writerow(dataQ3)
-#            print("prob: " , probQ3/100, " iteration: ", countQ3)
 
-maze = test(20,0.3)
-check = maze.aStar(0,0,9,9,maze.maze)
-print("astar: ", check)
-check2 = maze.bfs(0,0,9,9,maze.maze)
-print("bfs: ", check2)
+        while fringe:
+            current = heapq.heappop(fringe)
+            if (current[1][0].pt.y == finalRow and current[1][0].pt.x == finalCol):
+                return current[1][0].distance
+                #return True
+            if [current[1][0].pt.y, current[1][0].pt.x] not in visited:
+                if (mazeIn[current[1][0].pt.y][current[1][0].pt.x].state =='1'):
+                    return False
+                if(current[1][0].pt.y+1<self.dim and mazeIn[current[1][0].pt.y+1][current[1][0].pt.x].state == '0'):
+                    distanceFringe1 = self.calcDistance(current[1][0].pt.y+1, current[1][0].pt.x, finalRow, finalCol)
+                    heapq.heappush(fringe, (distanceFringe1+current[1][0].distance, [cellMaze(mazeIn[current[1][0].pt.y+1][current[1][0].pt.x].pt, mazeIn[current[1][0].pt.y+1][current[1][0].pt.x].state, current[1][0].distance + 1)]))
+                if(current[1][0].pt.x+1<self.dim and mazeIn[current[1][0].pt.y][current[1][0].pt.x+1].state == '0'):
+                    distanceFringe2 = self.calcDistance(current[1][0].pt.y, current[1][0].pt.x+1, finalRow, finalCol)
+                    heapq.heappush(fringe, (distanceFringe2+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.y][current[1][0].pt.x+1].pt, mazeIn[current[1][0].pt.y][current[1][0].pt.x+1].state, current[1][0].distance+1)]))
+                if(current[1][0].pt.y-1>0 and mazeIn[current[1][0].pt.y-1][current[1][0].pt.x].state == '0'):
+                    distanceFringe3 = self.calcDistance(current[1][0].pt.y-1, current[1][0].pt.x, finalRow, finalCol)
+                    heapq.heappush(fringe, (distanceFringe3+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.y-1][current[1][0].pt.x].pt, mazeIn[current[1][0].pt.y-1][current[1][0].pt.x].state, current[1][0].distance+1)]))
+                if(current[1][0].pt.x-1>0 and mazeIn[current[1][0].pt.y][current[1][0].pt.x-1].state == '0'):
+                    distanceFringe4 = self.calcDistance(current[1][0].pt.y, current[1][0].pt.x-1, finalRow, finalCol)
+                    heapq.heappush(fringe, (distanceFringe4+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.y][current[1][0].pt.x-1].pt, mazeIn[current[1][0].pt.y][current[1][0].pt.x-1].state, current[1][0].distance+1)]))
+                visited.append([current[1][0].pt.y, current[1][0].pt.x])
+                mazeIn = self.advance_fire_one_step(mazeIn, q)
+                for m in range(0, self.dim):
+                    for n in range(0, self.dim):
+                        print(mazeIn[m][n].state, end = ' ')
+                    print()
+                print()
+                self.counterAStar = len(visited)
+
+
+        return False
+
+    def printMaze(self, mazeIn):
+        for i in range(0,self.dim):
+            for j in range(0, self.dim):
+                print(mazeIn[i][j].state, end = ' ')
+            print()
+
+    def advance_fire_one_step(self, mazeIn, q):
+        mazeUse = copy.deepcopy(mazeIn)
+        for y in range(0,self.dim):
+            for x in range(0,self.dim):
+                fireCounter = 0
+                if mazeUse[y][x].state == '0':
+                    if(y+1<self.dim and mazeUse[y+1][x].state == '1'):
+                         fireCounter = fireCounter + 1
+                    if(x+1<self.dim and mazeUse[y][x+1].state == '1'):
+                        fireCounter = fireCounter + 1
+                    if(y-1>0 and mazeUse[y-1][x].state == '1'):
+                        fireCounter = fireCounter + 1
+                    if(x-1>0 and mazeUse[y][x-1].state == '1'):
+                        fireCounter = fireCounter + 1
+                    prob = 1 - (1-q)**fireCounter
+                    if random.random() <= prob:
+                        mazeUse[y][x].state == '1'
+        return mazeUse
+
+
+mazeTest = test(5, 0.3)
+check = mazeTest.aStarWithFire(0,0,4,4,mazeTest.maze, 1)
+print("astarfire: ", check)
+check2 = mazeTest.bfs(0,0,4,4,mazeTest.maze)
+print("bfs: ",  check2)
