@@ -44,107 +44,90 @@ class test:
             #print()
 
 
-    def dfs(self, rows, columns, finalRow, finalCol, mazeIn):
+    def dfs(self, x, y, finalX, finalY, mazeIn):
         startTime = time.time()
-        if mazeIn[rows][columns].state!='0':
-            return False
+        if mazeIn[x][y].state!='0':
+            return False, False
         fringe = []
         visited = []
-        fringe.append(mazeIn[rows][columns])
+        fringe.append(mazeIn[x][y])
         while fringe:
             current = fringe.pop()
             currPt = current.pt
-            if (currPt.y == finalRow and currPt.x == finalCol):
-                return True, time.time()-startTime
-                #return current.distance
-            if ([currPt.y, currPt.x]) not in visited:
-                if(currPt.y+1<self.dim and mazeIn[currPt.y+1][currPt.x].state == '0'):
-                    fringe.append(cellMaze( mazeIn[currPt.y+1][currPt.x].pt, mazeIn[currPt.y+1][currPt.x].state, current.distance+1))
-                if(currPt.x+1<self.dim and mazeIn[currPt.y][currPt.x+1].state == '0'):
-                    fringe.append(cellMaze(mazeIn[currPt.y][currPt.x+1].pt, mazeIn[currPt.y][currPt.x+1].state, current.distance+1))
-                if(currPt.y-1>0 and mazeIn[currPt.y-1][currPt.x].state == '0'):
-                    fringe.append(cellMaze(mazeIn[currPt.y-1][currPt.x].pt, mazeIn[currPt.y-1][currPt.x].state, current.distance+1))
-                if(currPt.x-1>0 and mazeIn[currPt.y][currPt.x-1].state == '0'):
-                    fringe.append(cellMaze(mazeIn[currPt.y][currPt.x-1].pt, mazeIn[currPt.y][currPt.x-1].state, current.distance+1))
-                visited.append([currPt.y, currPt.x])
+            if (currPt.x == finalX and currPt.y == finalY):
+                return True, current.distance, time.time() - startTime
+            if ([currPt.x, currPt.y]) not in visited:
+                if(currPt.y-1>=0 and mazeIn[currPt.x][currPt.y-1].state == '0'):
+                    fringe.append(cellMaze(mazeIn[currPt.x][currPt.y-1].pt, mazeIn[currPt.x][currPt.y-1].state, current.distance+1))
+                if(currPt.x-1>=0 and mazeIn[currPt.x-1][currPt.y].state == '0'):
+                    fringe.append(cellMaze(mazeIn[currPt.x-1][currPt.y].pt, mazeIn[currPt.x-1][currPt.y].state, current.distance+1))
+                if(currPt.y+1<self.dim and mazeIn[currPt.x][currPt.y+1].state == '0'):
+                    fringe.append(cellMaze(mazeIn[currPt.x][currPt.y+1].pt, mazeIn[currPt.x][currPt.y+1].state, current.distance+1))
+                if(currPt.x+1<self.dim and mazeIn[currPt.x+1][currPt.y].state == '0'):
+                    fringe.append(cellMaze( mazeIn[currPt.x+1][currPt.y].pt, mazeIn[currPt.x+1][currPt.y].state, current.distance+1))
+                visited.append([currPt.x, currPt.y])
                 self.counterDFS = len(visited)
-        return False, time.time()-startTime
+        return False, False
 
-
-    def bfs(self, rows, columns, finalRow, finalCol, mazeIn):
+#DONE, does not account for fire spread, order of queue pop goes down, right, up, left
+#returns true, distance of path
+    def bfs(self, x, y, finalX, finalY, mazeIn):
         startTime = time.time()
-        if mazeIn[rows][columns].state!='0':
-            return False
+        if mazeIn[x][y].state!='0':
+            return False, False
         fringe = []
         visited = []
-        fringe.append(mazeIn[rows][columns])
+        fringe.append(mazeIn[x][y])
         while fringe:
             current = fringe.pop(0)
             currPt = current.pt
-            if (currPt.y == finalRow and currPt.x == finalCol):
-                #return current.distance
-                return True, time.time()-startTime
-            if ([currPt.y, currPt.x]) not in visited:
-                if(currPt.y+1<self.dim and mazeIn[currPt.y+1][currPt.x].state == '0'):
-                    fringe.append(cellMaze( mazeIn[currPt.y+1][currPt.x].pt, mazeIn[currPt.y+1][currPt.x].state, current.distance+1))
-                if(currPt.x+1<self.dim and mazeIn[currPt.y][currPt.x+1].state == '0'):
-                    fringe.append(cellMaze(mazeIn[currPt.y][currPt.x+1].pt, mazeIn[currPt.y][currPt.x+1].state, current.distance+1))
-                if(currPt.y-1>0 and mazeIn[currPt.y-1][currPt.x].state == '0'):
-                    fringe.append(cellMaze(mazeIn[currPt.y-1][currPt.x].pt, mazeIn[currPt.y-1][currPt.x].state, current.distance+1))
-                if(currPt.x-1>0 and mazeIn[currPt.y][currPt.x-1].state == '0'):
-                    fringe.append(cellMaze(mazeIn[currPt.y][currPt.x-1].pt, mazeIn[currPt.y][currPt.x-1].state, current.distance+1))
-                visited.append([currPt.y, currPt.x])
+            if (currPt.x == finalX and currPt.y == finalY):
+                return True, current.distance, time.time() - startTime
+            if ([currPt.x, currPt.y]) not in visited:
+                if(currPt.x+1<self.dim and mazeIn[currPt.x+1][currPt.y].state == '0'):
+                    fringe.append(cellMaze( mazeIn[currPt.x+1][currPt.y].pt, mazeIn[currPt.x+1][currPt.y].state, current.distance+1))
+                if(currPt.y+1<self.dim and mazeIn[currPt.x][currPt.y+1].state == '0'):
+                    fringe.append(cellMaze(mazeIn[currPt.x][currPt.y+1].pt, mazeIn[currPt.x][currPt.y+1].state, current.distance+1))
+                if(currPt.x-1>=0 and mazeIn[currPt.x-1][currPt.y].state == '0'):
+                    fringe.append(cellMaze(mazeIn[currPt.x-1][currPt.y].pt, mazeIn[currPt.x-1][currPt.y].state, current.distance+1))
+                if(currPt.y-1>=0 and mazeIn[currPt.x][currPt.y-1].state == '0'):
+                    fringe.append(cellMaze(mazeIn[currPt.x][currPt.y-1].pt, mazeIn[currPt.x][currPt.y-1].state, current.distance+1))
+                visited.append([currPt.x, currPt.y])
                 self.counterBFS = len(visited)
-        return False, time.time()-startTime
+        return False, False
 
-
-    def aStar(self, rows, columns, finalRow, finalCol, mazeIn):
+#DONE, does not account for fire, heap pop order is based on heuristic euclidian distance to goal + steps already travelled
+    def aStar(self, x, y, finalX, finalY, mazeIn):
         startTime = time.time()
-        if mazeIn[rows][columns].state!='0':
-            return False
+        if mazeIn[x][y].state!='0':
+            return False, False
         fringe = []
         visited = []
-        distance = self.calcDistance(rows, columns, finalRow, finalCol)
+        distance = self.calcDistance(x, y, finalX, finalY)
         heapq.heapify(fringe)
-        heapq.heappush(fringe, (distance, [mazeIn[rows][columns]]))
-
-
+        heapq.heappush(fringe, (distance, [mazeIn[x][y]]))
         while fringe:
             current = heapq.heappop(fringe)
-            if (current[1][0].pt.y == finalRow and current[1][0].pt.x == finalCol):
-                #return current[1][0].distance
-                return True, time.time()-startTime
-            if [current[1][0].pt.y, current[1][0].pt.x] not in visited:
-                if(current[1][0].pt.y+1<self.dim and mazeIn[current[1][0].pt.y+1][current[1][0].pt.x].state == '0'):
-                    distanceFringe1 = self.calcDistance(current[1][0].pt.y+1, current[1][0].pt.x, finalRow, finalCol)
-                    heapq.heappush(fringe, (distanceFringe1+current[1][0].distance, [cellMaze(mazeIn[current[1][0].pt.y+1][current[1][0].pt.x].pt, mazeIn[current[1][0].pt.y+1][current[1][0].pt.x].state, current[1][0].distance + 1)]))
-                if(current[1][0].pt.x+1<self.dim and mazeIn[current[1][0].pt.y][current[1][0].pt.x+1].state == '0'):
-                    distanceFringe2 = self.calcDistance(current[1][0].pt.y, current[1][0].pt.x+1, finalRow, finalCol)
-                    heapq.heappush(fringe, (distanceFringe2+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.y][current[1][0].pt.x+1].pt, mazeIn[current[1][0].pt.y][current[1][0].pt.x+1].state, current[1][0].distance+1)]))
-                if(current[1][0].pt.y-1>0 and mazeIn[current[1][0].pt.y-1][current[1][0].pt.x].state == '0'):
-                    distanceFringe3 = self.calcDistance(current[1][0].pt.y-1, current[1][0].pt.x, finalRow, finalCol)
-                    heapq.heappush(fringe, (distanceFringe3+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.y-1][current[1][0].pt.x].pt, mazeIn[current[1][0].pt.y-1][current[1][0].pt.x].state, current[1][0].distance+1)]))
-                if(current[1][0].pt.x-1>0 and mazeIn[current[1][0].pt.y][current[1][0].pt.x-1].state == '0'):
-                    distanceFringe4 = self.calcDistance(current[1][0].pt.y, current[1][0].pt.x-1, finalRow, finalCol)
-                    heapq.heappush(fringe, (distanceFringe4+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.y][current[1][0].pt.x-1].pt, mazeIn[current[1][0].pt.y][current[1][0].pt.x-1].state, current[1][0].distance+1)]))
-                visited.append([current[1][0].pt.y, current[1][0].pt.x])
+            if (current[1][0].pt.x == finalX and current[1][0].pt.y == finalY):
+                return True, current[1][0].distance, time.time() - startTime()
+            if [current[1][0].pt.x, current[1][0].pt.y] not in visited:
+                if(current[1][0].pt.x+1<self.dim and mazeIn[current[1][0].pt.x+1][current[1][0].pt.y].state == '0'):
+                    distanceFringe1 = self.calcDistance(current[1][0].pt.x+1, current[1][0].pt.y, finalX, finalY)
+                    heapq.heappush(fringe, (distanceFringe1+current[1][0].distance, [cellMaze(mazeIn[current[1][0].pt.x+1][current[1][0].pt.y].pt, mazeIn[current[1][0].pt.x+1][current[1][0].pt.y].state, current[1][0].distance + 1)]))
+                if(current[1][0].pt.y+1<self.dim and mazeIn[current[1][0].pt.x][current[1][0].pt.y+1].state == '0'):
+                    distanceFringe2 = self.calcDistance(current[1][0].pt.x, current[1][0].pt.y+1, finalX, finalY)
+                    heapq.heappush(fringe, (distanceFringe2+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.x][current[1][0].pt.y+1].pt, mazeIn[current[1][0].pt.x][current[1][0].pt.y+1].state, current[1][0].distance+1)]))
+                if(current[1][0].pt.x-1>=0 and mazeIn[current[1][0].pt.x-1][current[1][0].pt.y].state == '0'):
+                    distanceFringe3 = self.calcDistance(current[1][0].pt.x-1, current[1][0].pt.y, finalX, finalY)
+                    heapq.heappush(fringe, (distanceFringe3+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.x-1][current[1][0].pt.y].pt, mazeIn[current[1][0].pt.x-1][current[1][0].pt.y].state, current[1][0].distance+1)]))
+                if(current[1][0].pt.y-1>=0 and mazeIn[current[1][0].pt.x][current[1][0].pt.y-1].state == '0'):
+                    distanceFringe4 = self.calcDistance(current[1][0].pt.x, current[1][0].pt.y-1, finalX, finalY)
+                    heapq.heappush(fringe, (distanceFringe4+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.x][current[1][0].pt.y-1].pt, mazeIn[current[1][0].pt.x][current[1][0].pt.y-1].state, current[1][0].distance+1)]))
+                visited.append([current[1][0].pt.x, current[1][0].pt.y])
                 self.counterAStar = len(visited)
-        return False, time.time()-startTime
+        return False, False
 
+#DONE, helper method to calculate euclidian distance
     def calcDistance(self, rows, columns, finalRow, finalCol):
         distance = math.sqrt( ((columns-finalCol)**2)+((rows-finalRow)**2) )
         return distance
-
-
-Totaltime = 0
-size=1000
-while Totaltime<60:
-    maze = test(size, 0.3)
-    startTime = time.time()
-    check1 = maze.aStar(0,0,size-1,size-1,maze.maze)
-    if (check1[0] == True):
-        Totaltime = time.time()-startTime
-    print("astar: ", check1)
-    size+=5
-
-print("Largest dimensions: ", size-10)

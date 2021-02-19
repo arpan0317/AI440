@@ -17,11 +17,12 @@ class cellMaze:
     def __lt__(self, other):
         return self.distance < other.distance
 
-class test:
+class q3:
     def __init__(self, dim, p):
         self.maze = [ [ None for i in range(dim) ] for j in range(dim) ]
         self.dim = dim
         self.p = p
+        self.foundDFS = False
         self.visited = []
         self.counterDFS = 0
         self.counterBFS = 0
@@ -127,19 +128,20 @@ class test:
         distance = math.sqrt( ((columns-finalCol)**2)+((rows-finalRow)**2) )
         return distance
 
-data_headerQ2 = ['density', 'reached']
-with open('exportQ2.csv', 'w') as file_writerQ2:
-    writerQ2 = csv.writer(file_writerQ2)
-    writerQ2.writerow(data_headerQ2)
+data_headerQ3 = ['avg difference', 'density']
+with open('exportQ3.csv', 'w') as file_writerQ3:
+    writerQ3 = csv.writer(file_writerQ3)
+    writerQ3.writerow(data_headerQ3)
 
-    for probQ2 in range(1,100):
-        trueCounter = 0
-        for countQ2 in range(0,100):
-            mazeQ2 = test(100,probQ2/100)
-            checkQ2 = mazeQ2.dfs(0,0,99,99,mazeQ2.maze)
-            if checkQ2[0] == True:
-                trueCounter = trueCounter + 1
-            print("prob: " , probQ2/100, " iteration: ", countQ2)
-        dataQ2 = [probQ2/100, trueCounter/100]
-        writerQ2.writerow(dataQ2)
-#FILE DONE 
+    for probQ3 in range(1,50):
+        difference = 0
+        diffSum = 0
+        for countQ3 in range(0,25):
+            mazeQ3 = q3(100,probQ3/50)
+            checkQ3BFS = mazeQ3.bfs(0,0,99,99,mazeQ3.maze)
+            checkQ3AStar = mazeQ3.aStar(0,0,99,99,mazeQ3.maze)
+            difference = mazeQ3.counterBFS - mazeQ3.counterAStar
+            diffSum = diffSum + difference
+            print("diff: " ,difference, " iteration: ", countQ3)
+        dataQ3 = [diffSum/25, probQ3/50]
+        writerQ3.writerow(dataQ3)
