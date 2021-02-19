@@ -70,31 +70,49 @@ class test:
         return False, False
 
 #DONE, does not account for fire spread, order of queue pop goes down, right, up, left
-#returns true, distance of path
+#returns true, distance of path, pathStack with top of stack being 0,0
     def bfs(self, x, y, finalX, finalY, mazeIn):
-        startTime = time.time()
         if mazeIn[x][y].state!='0':
-            return False, False
+            return False, False, False
         fringe = []
         visited = []
+        pathStack = []
+        traceBack = {}
+        traceBack[(0,0)] = (0,0)
         fringe.append(mazeIn[x][y])
         while fringe:
             current = fringe.pop(0)
             currPt = current.pt
             if (currPt.x == finalX and currPt.y == finalY):
-                return True, current.distance, time.time() - startTime
+                currNode = (finalX, finalY)
+                #print(currNode)
+                pathStack.append(currNode)
+                for i in range(0, current.distance):
+                    #print(traceBack.get((currNode)))
+                    pathStack.append(traceBack.get((currNode)))
+                    currNode = traceBack.get((currNode))
+                return True, current.distance, pathStack
             if ([currPt.x, currPt.y]) not in visited:
                 if(currPt.x+1<self.dim and mazeIn[currPt.x+1][currPt.y].state == '0'):
                     fringe.append(cellMaze( mazeIn[currPt.x+1][currPt.y].pt, mazeIn[currPt.x+1][currPt.y].state, current.distance+1))
+                    if ([currPt.x+1, currPt.y]) not in visited:
+                        traceBack[(currPt.x+1, currPt.y)] = (currPt.x, currPt.y)
                 if(currPt.y+1<self.dim and mazeIn[currPt.x][currPt.y+1].state == '0'):
                     fringe.append(cellMaze(mazeIn[currPt.x][currPt.y+1].pt, mazeIn[currPt.x][currPt.y+1].state, current.distance+1))
+                    if ([currPt.x, currPt.y+1]) not in visited:
+                        traceBack[(currPt.x, currPt.y+1)] = (currPt.x, currPt.y)
                 if(currPt.x-1>=0 and mazeIn[currPt.x-1][currPt.y].state == '0'):
                     fringe.append(cellMaze(mazeIn[currPt.x-1][currPt.y].pt, mazeIn[currPt.x-1][currPt.y].state, current.distance+1))
+                    if ([currPt.x-1, currPt.y]) not in visited:
+                        traceBack[(currPt.x-1, currPt.y)] = (currPt.x, currPt.y)
                 if(currPt.y-1>=0 and mazeIn[currPt.x][currPt.y-1].state == '0'):
                     fringe.append(cellMaze(mazeIn[currPt.x][currPt.y-1].pt, mazeIn[currPt.x][currPt.y-1].state, current.distance+1))
+                    if ([currPt.x, currPt.y-1]) not in visited:
+                        traceBack[(currPt.x, currPt.y-1)] = (currPt.x, currPt.y)
                 visited.append([currPt.x, currPt.y])
                 self.counterBFS = len(visited)
-        return False, False
+                #print([currPt.x, currPt.y])
+        return False, False, False
 
 #DONE, does not account for fire, heap pop order is based on heuristic euclidian distance to goal + steps already travelled
 #returns true, distance of path, actual path in stack with top being 0,0
