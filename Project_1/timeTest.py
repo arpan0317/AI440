@@ -97,35 +97,52 @@ class test:
         return False, False
 
 #DONE, does not account for fire, heap pop order is based on heuristic euclidian distance to goal + steps already travelled
+#returns true, distance of path, actual path in stack with top being 0,0
     def aStar(self, x, y, finalX, finalY, mazeIn):
-        startTime = time.time()
         if mazeIn[x][y].state!='0':
-            return False, False
+            return False, False, False
         fringe = []
         visited = []
+        pathStack = []
+        traceBack = {}
+        traceBack[(0,0)] = (0,0)
         distance = self.calcDistance(x, y, finalX, finalY)
         heapq.heapify(fringe)
         heapq.heappush(fringe, (distance, [mazeIn[x][y]]))
         while fringe:
             current = heapq.heappop(fringe)
             if (current[1][0].pt.x == finalX and current[1][0].pt.y == finalY):
-                return True, current[1][0].distance, time.time() - startTime()
+                currNode = (finalX, finalY)
+                pathStack.append(currNode)
+                for i in range(0, current[1][0].distance):
+                    #print(traceBack.get((current)))
+                    pathStack.append(traceBack.get((currNode)))
+                    currNode = traceBack.get((currNode))
+                return True, current[1][0].distance, pathStack
             if [current[1][0].pt.x, current[1][0].pt.y] not in visited:
                 if(current[1][0].pt.x+1<self.dim and mazeIn[current[1][0].pt.x+1][current[1][0].pt.y].state == '0'):
                     distanceFringe1 = self.calcDistance(current[1][0].pt.x+1, current[1][0].pt.y, finalX, finalY)
                     heapq.heappush(fringe, (distanceFringe1+current[1][0].distance, [cellMaze(mazeIn[current[1][0].pt.x+1][current[1][0].pt.y].pt, mazeIn[current[1][0].pt.x+1][current[1][0].pt.y].state, current[1][0].distance + 1)]))
+                    if ([current[1][0].pt.x+1, current[1][0].pt.y]) not in visited:
+                        traceBack[(current[1][0].pt.x+1, current[1][0].pt.y)] = (current[1][0].pt.x, current[1][0].pt.y)
                 if(current[1][0].pt.y+1<self.dim and mazeIn[current[1][0].pt.x][current[1][0].pt.y+1].state == '0'):
                     distanceFringe2 = self.calcDistance(current[1][0].pt.x, current[1][0].pt.y+1, finalX, finalY)
                     heapq.heappush(fringe, (distanceFringe2+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.x][current[1][0].pt.y+1].pt, mazeIn[current[1][0].pt.x][current[1][0].pt.y+1].state, current[1][0].distance+1)]))
+                    if ([current[1][0].pt.x, current[1][0].pt.y+1]) not in visited:
+                        traceBack[(current[1][0].pt.x, current[1][0].pt.y+1)] = (current[1][0].pt.x, current[1][0].pt.y)
                 if(current[1][0].pt.x-1>=0 and mazeIn[current[1][0].pt.x-1][current[1][0].pt.y].state == '0'):
                     distanceFringe3 = self.calcDistance(current[1][0].pt.x-1, current[1][0].pt.y, finalX, finalY)
                     heapq.heappush(fringe, (distanceFringe3+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.x-1][current[1][0].pt.y].pt, mazeIn[current[1][0].pt.x-1][current[1][0].pt.y].state, current[1][0].distance+1)]))
+                    if ([current[1][0].pt.x-1, current[1][0].pt.y]) not in visited:
+                        traceBack[(current[1][0].pt.x-1, current[1][0].pt.y)] = (current[1][0].pt.x, current[1][0].pt.y)
                 if(current[1][0].pt.y-1>=0 and mazeIn[current[1][0].pt.x][current[1][0].pt.y-1].state == '0'):
                     distanceFringe4 = self.calcDistance(current[1][0].pt.x, current[1][0].pt.y-1, finalX, finalY)
                     heapq.heappush(fringe, (distanceFringe4+current[1][0].distance,  [cellMaze(mazeIn[current[1][0].pt.x][current[1][0].pt.y-1].pt, mazeIn[current[1][0].pt.x][current[1][0].pt.y-1].state, current[1][0].distance+1)]))
+                    if ([current[1][0].pt.x, current[1][0].pt.y-1]) not in visited:
+                        traceBack[(current[1][0].pt.x, current[1][0].pt.y-1)] = (current[1][0].pt.x, current[1][0].pt.y)
                 visited.append([current[1][0].pt.x, current[1][0].pt.y])
                 self.counterAStar = len(visited)
-        return False, False
+        return False, False, False
 
 #DONE, helper method to calculate euclidian distance
     def calcDistance(self, rows, columns, finalRow, finalCol):
