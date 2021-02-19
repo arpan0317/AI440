@@ -133,7 +133,7 @@ with open('exportQ3.csv', 'w') as file_writerQ3:
     writerQ3 = csv.writer(file_writerQ3)
     writerQ3.writerow(data_headerQ3)
 
-    for probQ3 in range(1,50):
+    for probQ3 in range(1,50): 
         difference = 0
         diffSum = 0
         for countQ3 in range(0,25):

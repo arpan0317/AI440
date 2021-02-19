@@ -201,7 +201,7 @@ with open('exportQ5.csv', 'w') as file_writerQ5:
 
     for probQ5 in range(1,50):
         truthCounter1 = 0
-        truthCounter2 = 0
+        truthCounter2 = 0 
         for countQ5 in range(0,50):
             mazeQ5 = path(40,0.3)
             checkQ5BFS = mazeQ5.bfs(0,0,39,39,mazeQ5.maze)

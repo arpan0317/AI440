@@ -131,3 +131,43 @@ class test:
     def calcDistance(self, rows, columns, finalRow, finalCol):
         distance = math.sqrt( ((columns-finalCol)**2)+((rows-finalRow)**2) )
         return distance
+
+
+
+Totaltime = 0
+size=180
+while Totaltime<60:
+    maze = test(size, 0.3)
+    startTime = time.time()
+    check1 = maze.aStar(0,0,size-1,size-1,maze.maze)
+    endTime = time.time()
+    if (check1 == True):
+        Totaltime = endTime-startTime
+    #print("astar: ", check1)
+    size+=5
+Totaltime1 = 0
+size1=180
+while Totaltime1<60:
+    maze = test(size1, 0.3)
+    startTime = time.time()
+    check2 = maze.dfs(0,0,size1-1,size1-1,maze.maze)
+    endTime = time.time()
+    if (check2 == True):
+        Totaltime1 = endTime-startTime
+    #print("dfs: ", check2)
+    size1+=5
+Totaltime2 = 0
+size2=150
+while Totaltime2<60:
+    maze = test(size2, 0.3)
+    startTime = time.time()
+    check3 = maze.bfs(0,0,size2-1,size2-1,maze.maze)
+    endTime = time.time()
+    if (check3 == True):
+        Totaltime2 = endTime-startTime
+    #print("bfs: ", check3)
+    size2+=5
+
+print("Largest aStar dimensions: ", size-10)
+print("Largest dfs dimensions: ", size1-10)
+print("Largest bfs dimensions: ", size2-10)

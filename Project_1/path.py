@@ -10,7 +10,7 @@ class point:
 
 class cellMaze:
     def __init__(self, pt: point, state = '0', distance = 0):
-        self.state = state
+        self.state = state 
         self.distance = distance
         self.pt = pt
 

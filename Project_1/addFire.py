@@ -78,7 +78,7 @@ class test:
                 self.counterDFS = len(visited)
                 #print([currPt.x, currPt.y])
         return False
-
+ 
 
     def bfs(self, x, y, finalX, finalY, mazeIn):
         if mazeIn[x][y].state!='0':

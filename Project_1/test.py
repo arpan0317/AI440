@@ -49,7 +49,7 @@ class test:
         visited = []
         fringe.append(mazeIn[x][y])
         while fringe:
-            current = fringe.pop()
+            current = fringe.pop() 
             currPt = current.pt
             if (currPt.x == finalX and currPt.y == finalY):
                 return True, current.distance
@@ -142,4 +142,4 @@ with open('exportQ2.csv', 'w') as file_writerQ2:
             print("prob: " , probQ2/100, " iteration: ", countQ2)
         dataQ2 = [probQ2/100, trueCounter/100]
         writerQ2.writerow(dataQ2)
-#FILE DONE 
+#FILE DONE
