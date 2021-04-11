@@ -1,4 +1,5 @@
 from fractions import Fraction
+from multiprocessing import Pool
 import random
 import sys
 import csv
@@ -18,14 +19,14 @@ class cell:
 
 class land:
     def __init__(self):
-        self.dim = 15;
+        self.dim = 50;
         self.FalseNegativeMap =  [ [ None for i in range(self.dim) ] for j in range(self.dim) ]
         self.map = [ [ None for i in range(self.dim) ] for j in range(self.dim) ]
         for i in range(0, self.dim):
             for j in range(0, self.dim):
                 pt = point(i,j)
                 rand = random.randint(1, 4)
-                c = cell(pt, rand, float.hex(1/225))
+                c = cell(pt, rand, float.hex(1/2500))
                 if rand == 1:
                     self.FalseNegativeMap[i][j] = float.hex(0.1)
                 elif rand == 2:
@@ -247,34 +248,42 @@ class land:
             distance += mDistance
 
 
-scoreAgent1 = 0
-for i in range(0, 25):
+#scoreAgent1 = 0
+#for i in range(0, 25):
     #print(i)
-    landTest1 = land()
-    score1 = landTest1.agent1()
+#    landTest1 = land()
+#    score1 = landTest1.agent1()
     #print(score1)
-    scoreAgent1 += score1
+#    scoreAgent1 += score1
 
-print("Agent1: ", scoreAgent1/25)
+#print("Agent1: ", scoreAgent1/25)
 
-scoreAgent2 = 0
-for j in range(0, 25):
+#scoreAgent2 = 0
+#for j in range(0, 25):
     #print(j)
-    landTest2 = land()
-    score2 = landTest2.agent2()
+#    landTest2 = land()
+#    score2 = landTest2.agent2()
     #print(score2)
-    scoreAgent2 += score2
+#    scoreAgent2 += score2
 
-print("Agent2: ", scoreAgent2/25)
+#print("Agent2: ", scoreAgent2/25)
 
-scoreAgentAdv = 0
-for k in range(0, 25):
-    print(k)
-    landTestAdv = land()
-    scoreAdv = landTestAdv.improvedAgent()
+#scoreAgentAdv = 0
+#for k in range(0, 25):
+#    print(k)
+#    landTestAdv = land()
+#    scoreAdv = landTestAdv.improvedAgent()
     #print(scoreAdv)
-    scoreAgentAdv += scoreAdv
-
+#    scoreAgentAdv += scoreAdv
+scoreAgentAdv = 0
+lands = []
+for k in range(0, 25):
+    landTestAdv = land()
+    lands.append(landTestAdv)
+p=Pool(25)
+r = p.map(land.improvedAgent, lands)
+for result in r:
+    scoreAgentAdv += result
 print("AgentAdv: ", scoreAgentAdv/25)
 
 #landTest = land()
