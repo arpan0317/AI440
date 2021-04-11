@@ -18,14 +18,14 @@ class cell:
 
 class land:
     def __init__(self):
-        self.dim = 25;
+        self.dim = 15;
         self.FalseNegativeMap =  [ [ None for i in range(self.dim) ] for j in range(self.dim) ]
         self.map = [ [ None for i in range(self.dim) ] for j in range(self.dim) ]
         for i in range(0, self.dim):
             for j in range(0, self.dim):
                 pt = point(i,j)
                 rand = random.randint(1, 4)
-                c = cell(pt, rand, float.hex(1/625))
+                c = cell(pt, rand, float.hex(1/225))
                 if rand == 1:
                     self.FalseNegativeMap[i][j] = float.hex(0.1)
                 elif rand == 2:
@@ -175,8 +175,10 @@ class land:
         prob = 0
         for i in range(0, self.dim):
             for j in range(0, self.dim):
-                #print((float.fromhex(self.map[i][j].prob)*(1-float.fromhex(self.FalseNegativeMap[i][j]))), ' ', end = ' ')
-                if (round((float.fromhex(self.map[i][j].prob)*(1-float.fromhex(self.FalseNegativeMap[i][j]))), 10) < round((float.fromhex(self.map[points[0][0]][points[0][1]].prob)*(1-float.fromhex(self.FalseNegativeMap[points[0][0]][points[0][1]]))), 10) and
+        #        print((float.fromhex(self.map[i][j].prob)*(1-float.fromhex(self.FalseNegativeMap[i][j]))), ' ', end = ' ')
+                if abs(currCol-i)+abs(currRow-j)>15:
+                    continue
+                elif (round((float.fromhex(self.map[i][j].prob)*(1-float.fromhex(self.FalseNegativeMap[i][j]))), 10) < round((float.fromhex(self.map[points[0][0]][points[0][1]].prob)*(1-float.fromhex(self.FalseNegativeMap[points[0][0]][points[0][1]]))), 10) and
                     round((float.fromhex(self.map[i][j].prob)*(1-float.fromhex(self.FalseNegativeMap[i][j]))), 10) > round((float.fromhex(self.map[pointsSecond[0][0]][pointsSecond[0][1]].prob)*(1-float.fromhex(self.FalseNegativeMap[pointsSecond[0][0]][pointsSecond[0][1]]))), 10)):
                     pointsSecond.append((i, j))
                 elif round((float.fromhex(self.map[i][j].prob)*(1-float.fromhex(self.FalseNegativeMap[i][j]))), 10)>round(prob, 10):
@@ -189,7 +191,7 @@ class land:
                     pt = (i,j)
                     points.append(pt)
 
-            #print()
+        #    print()
         col = points[0][0]
         row= points[0][1]
         secondCol = pointsSecond[0][0]
@@ -211,8 +213,8 @@ class land:
                     if(i == j):
                         continue
                     newDistance = abs(currCol-points[i][0])+abs(currRow-points[i][1])+abs(points[i][0] - points[j][0])+abs(points[i][1]-points[j][1])
-                    #print("curr dist: ", distance)
-                    #print("new dist + coordi, coordj: ", newDistance, points[i][0], points[i][1], points[j][0], points[j][1])
+        #            print("curr dist: ", distance)
+        #            print("new dist + coordi, coordj: ", newDistance, points[i][0], points[i][1], points[j][0], points[j][1])
                     if distance>newDistance:
                         distance = newDistance
                         col = points[i][0]
@@ -232,11 +234,11 @@ class land:
         search = 0
         while True:
             search +=1
-            #print("Row: ", currCol)
-            #print("Col: ", currRow)
+        #    print("Row: ", currCol)
+        #    print("Col: ", currRow)
             if self.map[currCol][currRow].pt.col == self.target.col and self.map[currCol][currRow].pt.row == self.target.row:
                 if random.random() > float.fromhex(self.FalseNegativeMap[currCol][currRow]):
-                    #print('type: ', self.map[currCol][currRow].state)
+        #            print('type: ', self.map[currCol][currRow].state)
                     return distance+search
             self.updateProb(currCol, currRow)
             #self.printProb()
@@ -246,34 +248,34 @@ class land:
 
 
 scoreAgent1 = 0
-for i in range(0, 100):
+for i in range(0, 25):
     #print(i)
     landTest1 = land()
     score1 = landTest1.agent1()
     #print(score1)
     scoreAgent1 += score1
 
-print("Agent1: ", scoreAgent1/100)
+print("Agent1: ", scoreAgent1/25)
 
 scoreAgent2 = 0
-for j in range(0, 100):
+for j in range(0, 25):
     #print(j)
     landTest2 = land()
     score2 = landTest2.agent2()
     #print(score2)
     scoreAgent2 += score2
 
-print("Agent2: ", scoreAgent2/100)
+print("Agent2: ", scoreAgent2/25)
 
 scoreAgentAdv = 0
-for k in range(0, 100):
-    #print(k)
+for k in range(0, 25):
+    print(k)
     landTestAdv = land()
     scoreAdv = landTestAdv.improvedAgent()
     #print(scoreAdv)
     scoreAgentAdv += scoreAdv
 
-print("AgentAdv: ", scoreAgentAdv/100)
+print("AgentAdv: ", scoreAgentAdv/25)
 
 #landTest = land()
 #score1 = landTest.agent1()
